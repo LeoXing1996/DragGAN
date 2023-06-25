@@ -14,12 +14,30 @@ from gradio_utils import (ImageMask, draw_mask_on_image, draw_points_on_image,
                           on_change_single_global_state)
 from viz.renderer import Renderer, add_watermark_np
 
+try:
+    from openxlab.model import download
+    is_openxlab = True
+except Exception:
+    is_openxlab = False
+
 parser = ArgumentParser()
 parser.add_argument('--share', action='store_true')
 parser.add_argument('--cache-dir', type=str, default='./checkpoints')
 args = parser.parse_args()
 
-cache_dir = args.cache_dir
+# cache_dir = args.cache_dir
+
+if is_openxlab:
+    cache_dir = '/home/xlab-app-center/cache'
+    os.makedirs(cache_dir, exist_ok=True)
+    download(model_repo='mmagic/DragGAN',
+             model_name='DragGAN-Human',
+             output=cache_dir)
+    download(model_repo='mmagic/DragGAN',
+             model_name='DragGAN-Cat',
+             output=cache_dir)
+else:
+    cache_dir = args.cache_dir
 
 device = 'cuda'
 
